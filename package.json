@@ -1,0 +1,24 @@
+{
+  "name": "paseo-plugin-agy-provider",
+  "version": "0.1.0",
+  "description": "Paseo 0.8 provider plugin for Google's official Antigravity ACP server",
+  "type": "module",
+  "private": true,
+  "author": "3ae3ae",
+  "license": "MIT",
+  "repository": "github:3ae3ae/paseo-plugin-agy-provider",
+  "bugs": "https://github.com/3ae3ae/paseo-plugin-agy-provider/issues",
+  "scripts": {
+    "login": "node scripts/login.ts",
+    "test": "node --test server/command.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "devDependencies": {
+    "@getpaseo/plugin": "0.8.0",
+    "@types/node": "^24.3.0",
+    "typescript": "^5.9.2"
+  }
+}

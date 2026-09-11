@@ -1,0 +1,6 @@
+{
+  "id": "agy-provider",
+  "requirements": {
+    "paseo": "^0.8.0"
+  }
+}
