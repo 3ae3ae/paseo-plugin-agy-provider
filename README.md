@@ -6,6 +6,8 @@ Use Google's official **Antigravity ACP server** in [Paseo 0.8](https://paseo.sh
 > **Paseo's injected system prompts and the instructions they contain are not applied.**
 > Official ACP server 1.1.1 ignores these instructions. Workflows that rely on them are unsupported by this plugin. Review this limitation before installing.
 
+**Known issue in Paseo 0.8.0:** streamed replies can appear as separate blocks with large gaps, splitting words, lists, and Markdown formatting. Reported upstream: [paseo#4699](https://github.com/getpaseo/paseo/issues/4699). This plugin currently has no workaround.
+
 ![Antigravity in Paseo](images/demo.gif)
 
 Captured model picker and conversation. [Desktop](images/conversation.jpg) · [Compact layout](images/compact.jpg)
@@ -83,7 +85,7 @@ Update the official server separately. Removing the plugin leaves Google's serve
 
 - Real-agent verification covers macOS ARM64 and personal Google OAuth. Linux/Windows sessions, API-key and enterprise authentication, and physical mobile devices are unverified.
 - In-place steering and structured output guarantees are not implemented.
-- The current server/shim can display duplicate tool rows and split streamed text.
+- The current server/shim can display duplicate tool rows.
 - The login action requires an open workspace and the default plugin ID `agy-provider`. For a remote daemon, authentication runs on that host; the helper does not relay OAuth callbacks to another machine.
 
 See [VERIFICATION.md](VERIFICATION.md) for tested behavior and versions.
