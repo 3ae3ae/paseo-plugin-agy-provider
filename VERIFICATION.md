@@ -18,7 +18,7 @@ Verified on 2026-09-11 with Paseo **0.8.0**, `@getpaseo/plugin` **0.8.0**, and G
 | Cancellation | `paseo stop` interrupted an active counting response. |
 | Reload during a turn | Plugin reload closed the active agent session. |
 | Remove during a turn | Plugin removal closed the active session; no ACP server or companion harness processes remained after removal. The plugin was then reinstalled. |
-| Desktop and compact UI | Provider icon, model picker, controls, and basic conversation inspected at desktop and compact window widths. Screenshots are actual Paseo captures. This is not an iOS/Android device test. |
+| Desktop and compact UI | Provider icon, model picker, controls, and basic conversation inspected at 1224px and 548px window widths. Screenshots are actual Paseo captures. This is not an iOS/Android device test. |
 | Missing executable | Shim connection rejected with `ENOENT`; setup helper exited with an explanatory error. |
 | Missing companion executable | Reproduced `Internal error`; making the companion available resolved session creation. |
 

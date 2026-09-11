@@ -9,7 +9,7 @@ The monochrome SVG is a simplified drawing inspired by Antigravity's curved A ma
 
 ![Antigravity model picker and a real response in Paseo](images/demo.gif)
 
-Short walkthrough assembled from two captured Paseo interface states: the model picker and a completed conversation. The host UI is localized in Korean; the demo conversation and this documentation are in English. [Model picker](images/models.jpg) · [Conversation](images/conversation.jpg)
+Short walkthrough assembled from two captured Paseo interface states: the model picker and a completed conversation. The host UI is localized in Korean; the demo conversation and this documentation are in English. [Model picker](images/models.jpg) · [Conversation](images/conversation.jpg) · [Compact layout](images/compact.jpg)
 
 > **Paseo system prompts are not supported by the official ACP server 1.1.1.** Paseo sends them as `_meta._paseo.systemPrompt`, which the server ignores. This includes instructions Paseo supplies for its own workflows. Do not rely on those instructions being applied. The plugin does not silently prepend them to user messages.
 
