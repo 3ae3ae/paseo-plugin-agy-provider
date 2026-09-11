@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import { createInterface } from "node:readline";
 import { agyCommand } from "../server/command.ts";
 
-// Setup only: the provider never runs this script or handles credentials.
+// Setup only: Paseo's workspace terminal runs this, not the provider connection.
 const [executable, ...args] = agyCommand();
 const child = spawn(executable, args, {
   env: { ...process.env, PYTHONUNBUFFERED: "1" },

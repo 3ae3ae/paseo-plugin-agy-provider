@@ -13,5 +13,5 @@
     "allowImportingTsExtensions": true,
     "types": ["node"]
   },
-  "include": ["index.server.ts", "server/**/*.ts", "scripts/**/*.ts"]
+  "include": ["index.server.ts", "index.client.ts", "server/**/*.ts", "scripts/**/*.ts"]
 }

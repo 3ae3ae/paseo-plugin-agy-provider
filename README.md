@@ -43,28 +43,43 @@ Use the actual directory where you extracted the archive. The override is one ex
 
 An already running daemon does not inherit exports from a new terminal. Configure the environment in whatever launches your daemon and restart it there. Plugin reload re-reads the daemon's existing environment. Per-agent `--env` is too late to select the executable or authenticate global model discovery. On a remote daemon, install and authenticate on that remote machine.
 
-### 2. Authenticate the official server
-
-Paseo 0.8's ACP shim does not initiate `authenticate`. Logging into the ordinary `agy` CLI alone is insufficient. Authenticate the ACP server once, under the same OS user and environment as the daemon, using an ACP client that supports Google's login flow or this dependency-free setup helper:
-
-```sh
-git clone https://github.com/3ae3ae/paseo-plugin-agy-provider.git
-cd paseo-plugin-agy-provider
-node scripts/login.ts
-```
-
-The helper requires Node.js 22.18+ and **does not require `npm install`**. It sends ACP `initialize` and `authenticate` to the official server, prints Google's sign-in link when supplied, and exits. Google handles OAuth and credential storage; the helper does not read, copy, or save credentials. Its default method is `oauth-personal`.
-
-Other server-advertised methods can be passed as an argument, for example `node scripts/login.ts oauth-business`. Configure their prerequisites using Google's official documentation; only personal Google OAuth has been verified here. Run login on the daemon host. For remote OAuth, use a client with an appropriate remote login flow; this helper does not relay callbacks.
-
-The official server keeps its settings under `$GEMINI_HOME/antigravity-acp` (default `~/.gemini/antigravity-acp`). Login and the daemon must use the same `GEMINI_HOME` if you override it. The server records the selected auth method. A bare `GEMINI_API_KEY` does not select API-key authentication in server 1.1.1.
-
-### 3. Install the plugin
+### 2. Install the plugin
 
 ```sh
 paseo plugin add 3ae3ae/paseo-plugin-agy-provider
-paseo provider models agy
 ```
+
+Already installed? Run `paseo plugin update agy-provider` to get the login action introduced in v0.1.1. A release-pinned installation must be removed and re-added with the newer `--ref`.
+
+### 3. Log in from Paseo
+
+1. Open any workspace in Paseo 0.8.
+2. Open the **Command Center** (`Cmd+K` on macOS) and select **Antigravity: Log in with Google**.
+3. Complete Google's browser sign-in if prompted. Progress and the completion message appear in the workspace terminal named **Antigravity login**. If models were previously unavailable, reload `agy-provider` in Settings → Plugins after login.
+
+**No separate Git clone or `npm install` is needed.** The menu finds the already installed plugin and runs its bundled setup helper in Paseo's existing terminal. Node.js 22.18+ must be available in that terminal. The provider itself remains a thin `runAcpProvider()` registration; it does not manage credentials or run a background login service.
+
+Paseo 0.8's ACP shim does not initiate `authenticate`, and ordinary `agy` CLI login alone does not select an ACP auth method. The helper sends ACP `initialize` and `authenticate` with `oauth-personal`; Google's server handles OAuth and storage. If the browser does not open, use the sign-in URL printed in the terminal. On a remote daemon the login runs on that host; completing a remote callback requires an appropriate remote login setup, which this helper does not implement.
+
+Other authentication options are supported by the official server. An ACP client such as [Zed](https://antigravity.google/docs/ide/extensions/zed) can perform authentication, and the server also accepts `auth.type` in its settings. When that selects OAuth, server 1.1.1 can initiate sign-in during session creation. This settings-only route is not verified through Paseo's shim, so the menu uses the explicitly tested `authenticate` flow.
+
+For enterprise setup, run `node scripts/login.ts oauth-business` from the installed plugin directory after configuring Google's prerequisites. Find that directory with `paseo plugin ls agy-provider --json`; a second checkout is unnecessary. Only personal Google OAuth has been verified here.
+
+The official server keeps settings under `$GEMINI_HOME/antigravity-acp` (default `~/.gemini/antigravity-acp`). The terminal and daemon must use the same `GEMINI_HOME` and executable configuration. A bare `GEMINI_API_KEY` does not select API-key authentication in server 1.1.1.
+
+#### Gemini API key (no browser)
+
+The official server also supports API-key authentication. Configure `GEMINI_API_KEY` securely in the environment that starts the Paseo daemon, then merge this selection into `~/.gemini/antigravity-acp/settings.json` (or the matching file under your `GEMINI_HOME`), preserving other settings:
+
+```json
+{
+  "auth": { "type": "gemini-api-key" }
+}
+```
+
+Restart the daemon from the configured environment if it was already running. This settings-based API-key route needs no browser, clone, or login-helper invocation. Alternatively, with `GEMINI_API_KEY` available to the setup terminal, `node scripts/login.ts gemini-api-key` asks the official server to record that selection for you. Never put a real key in this repository, an issue, or an agent conversation. The plugin does not store keys. The API-key path is supported by server 1.1.1 but has not been tested here with a live key; see [Google's authentication options](https://antigravity.google/docs/ide/extensions/zed).
+
+### 4. Use Antigravity
 
 Choose **Antigravity** in Paseo's model picker, or start an agent from your workspace:
 
@@ -82,12 +97,12 @@ paseo plugin reload agy-provider
 paseo plugin remove agy-provider
 ```
 
-Update the official server separately using its registry distribution. Removing this plugin does not uninstall the server or remove Google's credentials or saved conversations. To pin a plugin release, install with `--ref v0.1.0`.
+Update the official server separately using its registry distribution. Removing this plugin does not uninstall the server or remove Google's credentials or saved conversations. To pin a plugin release, install with `--ref v0.1.1`.
 
 ## Limitations
 
 - **Paseo system prompts are ignored by official ACP server 1.1.1.** Workflows requiring Paseo's injected instructions are not supported. MCP transport support alone does not establish those workflows work.
-- **Authentication is a setup step.** If credentials expire or you sign out, authenticate again and reload the plugin. No login screen or credential manager is added to Paseo.
+- **Authentication is a setup step.** Use **Antigravity: Log in with Google** again if credentials expire or you sign out. The action needs an open workspace and the default plugin ID `agy-provider`; it reuses Paseo's terminal and Google's login flow.
 - **Capabilities are bounded by both the server and Paseo 0.8's shim.** In-place steering, structured output guarantees, and provider-specific extras are not added by this plugin. Use Paseo's stop/retry behavior where appropriate.
 - **Models and access depend on Google.** Availability, quotas, and failures are controlled by the official server and your account. No entitlement or model compatibility patches are applied.
 - **Real-agent validation is on macOS ARM64 only.** Other listed architectures have official distributions, but have not been verified end to end here.
@@ -99,7 +114,8 @@ Update the official server separately using its registry distribution. Removing 
 | --- | --- |
 | Executable not found / `ENOENT` | The daemon's PATH or `PASEO_AGY_ACP_BIN`, not only your interactive shell's environment. |
 | `Internal error` while opening a session | Preserve `localharness_external` beside the server; extract the full archive. |
-| `Authentication required` | Run the ACP login helper under the daemon user and matching `GEMINI_HOME`, then reload. |
+| `Authentication required` | Use **Antigravity: Log in with Google** in the workspace's Command Center, then reload the plugin if needed. |
+| Login action is missing | Update the plugin to v0.1.1+, use Paseo 0.8 on the client, and open a workspace. |
 | No models | Check server authentication, account access, and `paseo provider diagnostic agy`. |
 | Instructions appear ineffective | Paseo system prompts are unsupported; see Limitations. |
 

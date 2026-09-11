@@ -30,7 +30,7 @@ A live check placed a unique marker only in this metadata and asked the agent to
 
 ## Automated checks
 
-`npm run typecheck` passes. `npm test` runs one Node built-in test covering the platform command mapping, literal paths containing spaces, the Linux argument with an override, and unsupported OS rejection. No test framework or runtime dependencies are installed by the plugin.
+`npm run typecheck` passes. `npm test` runs two small Node built-in tests: platform command selection and login action routing. They cover literal paths containing spaces, Linux arguments with an override, unsupported OS rejection, use of the daemon's installed plugin directory and selected workspace, and preventing login from a disabled plugin. No test framework or runtime dependencies are installed by the plugin.
 
 The installed manifest ID, Paseo version requirement, package version, and absence of runtime dependencies were also checked before publication. Real-server tests are manual integration checks, not mocked CI results.
 
@@ -39,3 +39,9 @@ The installed manifest ID, Paseo version requirement, package version, and absen
 Linux and Windows real-agent sessions, enterprise/API-key authentication, image/audio prompts, external MCP interoperability, and physical mobile devices are not verified. In-place steering and structured output are not implemented by this plugin. Token-usage reporting is not guaranteed.
 
 The unmodified shim/server combination displayed duplicate file-operation rows and split streamed text, including a file link. Successful writes were checked on disk rather than inferred from those rows.
+
+## v0.1.1 login action
+
+The Command Center displays **Antigravity: Log in with Google** in an open workspace. Selecting it was exercised in Paseo Desktop and created a normal **Antigravity login** terminal in the installed plugin directory. The terminal ran the existing setup helper and reported authentication success with the previously authorized Google account; no extra clone or dependency installation was performed. The shell stays open so its completion message and errors can be read.
+
+The complete first-time OAuth browser flow was verified during v0.1.0 setup; the new menu was tested using the existing authorization. API-key inference remains unverified with a live key. The published README now also describes the official server's `auth.type` configuration route rather than treating the helper as the only option.
