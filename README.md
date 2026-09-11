@@ -5,6 +5,7 @@ A small [Paseo 0.8](https://paseo.sh/docs/plugins/v0.8/providers) provider plugi
 The plugin registers `runAcpProvider()` and selects the official executable for your operating system. Paseo owns ACP transport, sessions, permissions, and timeline rendering. There are no plugin runtime dependencies, build steps, automatic downloads, or custom protocol proxies.
 
 This is a community integration, not an official Google or Paseo product.
+The monochrome SVG is a simplified drawing inspired by Antigravity's curved A mark and follows Paseo's theme colors.
 
 ![Antigravity model picker and a real response in Paseo](images/demo.gif)
 

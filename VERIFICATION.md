@@ -9,6 +9,7 @@ Verified on 2026-09-11 with Paseo **0.8.0**, `@getpaseo/plugin` **0.8.0**, and G
 | Fresh ACP authentication state | `session/new` returned `Authentication required`; ordinary CLI installation/login did not select an ACP auth method. |
 | Personal Google OAuth | ACP `authenticate` succeeded; the separate `node scripts/login.ts` command also completed successfully. |
 | Directory plugin installation | Plugin loaded as `agy-provider`; `agy` was registered as Antigravity. |
+| Public Git installation | Removed the directory registration, installed `3ae3ae/paseo-plugin-agy-provider`, confirmed the Git source and commit, and completed another real prompt. |
 | Model and mode discovery | Paseo displayed 11 account-provided models and Default, Auto Edit, and YOLO modes. Counts and availability are account-dependent. |
 | Real prompt | Response completed in Paseo and appeared in its standard timeline. |
 | Permission approval | Approving a file creation produced `hello.txt` with the requested content. |
