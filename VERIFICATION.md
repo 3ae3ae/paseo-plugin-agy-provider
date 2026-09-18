@@ -2,7 +2,18 @@
 
 Verified on 2026-09-11 with Paseo **0.8.0**, `@getpaseo/plugin` **0.8.0**, and Google's unmodified official ACP server **agy_acp_server_1.1.1** on **macOS ARM64**. The server and its companion executable were downloaded from the official ACP Registry's Google distribution URL. Tests used a separate demonstration workspace.
 
-## Real-server checks
+## Paseo 0.9 compatibility review
+
+Reviewed on 2026-09-18 against the `v0.8.0` and `v0.9.0-beta.1` release sources and published SDK packages. The manifest now allows `^0.8.0 || ^0.9.0`. Provider registration and the workspace-terminal login use APIs available in both versions; no runtime implementation changes were needed.
+
+- Type checking and both existing Node tests passed with the installed 0.8.0 SDK and with the published 0.9.0-beta.1 plugin, client, and protocol packages in an isolated temporary copy.
+- Paseo's actual compatibility checker was exercised for both app and daemon: the old `^0.8.0` range rejects 0.9.0-beta.1; the new range accepts 0.8.0, 0.9.0-beta.1, and 0.9.0, and rejects 0.10.0. Paseo checks the stable core of prerelease versions as well as the full version. Checking a version string does not establish live support for an unreleased version.
+- The development SDK remains at 0.8.0. The manifest omits the 0.9-only `description` field because 0.8 rejects unknown manifest fields.
+- [Paseo #4701](https://github.com/getpaseo/paseo/pull/4701), included in 0.9.0-beta.1, fixes streamed ACP chunks without `messageId` splitting into separate messages. The fix is supplied by the daemon runtime, not this plugin. Upstream live verification used Codex ACP; Antigravity on 0.9 remains unverified.
+
+The local Paseo installation was not updated or restarted. These are source, type, and automated checks, not 0.9 end-to-end verification. Login, model discovery, prompts, permissions, restoration, and cancellation still need real-agent checks on 0.9. Existing system-prompt and duplicate-tool-row limitations remain.
+
+## Real-server checks (Paseo 0.8.0)
 
 | Scenario | Result |
 | --- | --- |
@@ -38,7 +49,7 @@ The installed manifest ID, Paseo version requirement, package version, and absen
 
 Linux and Windows real-agent sessions, enterprise/API-key authentication, image/audio prompts, external MCP interoperability, and physical mobile devices are not verified. In-place steering and structured output are not implemented by this plugin. Token-usage reporting is not guaranteed.
 
-The unmodified shim/server combination displayed duplicate file-operation rows and split streamed text, including a file link. Successful writes were checked on disk rather than inferred from those rows.
+The unmodified 0.8.0 shim/server combination displayed duplicate file-operation rows and split streamed text, including a file link. Successful writes were checked on disk rather than inferred from those rows. The 0.9 upstream streaming fix is described above; duplicate rows have not been confirmed fixed.
 
 ## v0.1.1 login action
 
