@@ -4,12 +4,13 @@ Verified on 2026-09-11 with Paseo **0.8.0**, `@getpaseo/plugin` **0.8.0**, and G
 
 ## Paseo 0.9 compatibility review
 
-Reviewed on 2026-09-18 against the `v0.8.0` and `v0.9.0-beta.1` release sources and published SDK packages. The manifest now allows `^0.8.0 || ^0.9.0`. Provider registration and the workspace-terminal login use APIs available in both versions; no runtime implementation changes were needed.
+Reviewed again on 2026-09-22 against the stable `v0.9.0` compatibility checker, manifest parser, update CLI, and published SDK. The manifest now allows `>=0.8.0`, removing the previous `^0.8.0 || ^0.9.0` upper bound. Provider registration and the workspace-terminal login use APIs available in both versions; no runtime implementation changes were needed.
 
-- Type checking and both existing Node tests passed with the installed 0.8.0 SDK and with the published 0.9.0-beta.1 plugin, client, and protocol packages in an isolated temporary copy.
-- Paseo's actual compatibility checker was exercised for both app and daemon: the old `^0.8.0` range rejects 0.9.0-beta.1; the new range accepts 0.8.0, 0.9.0-beta.1, and 0.9.0, and rejects 0.10.0. Paseo checks the stable core of prerelease versions as well as the full version. Checking a version string does not establish live support for an unreleased version.
+- Type checking and all three Node tests passed with SDK 0.8.0 and with the published 0.9.0 plugin, client, and protocol packages in an isolated temporary copy.
+- The automated manifest test uses Paseo's actual compatibility checker for both app and daemon. It accepts 0.8.0, 0.8.1, 0.9.0-beta.1, 0.9.0, 0.10.0, and 1.0.0, and rejects 0.7.2. Paseo also checks the stable core of prerelease versions. Acceptance by the version requirement does not establish runtime compatibility with future releases.
 - The development SDK remains at 0.8.0. The manifest omits the 0.9-only `description` field because 0.8 rejects unknown manifest fields.
-- [Paseo #4701](https://github.com/getpaseo/paseo/pull/4701), included in 0.9.0-beta.1, fixes streamed ACP chunks without `messageId` splitting into separate messages. The fix is supplied by the daemon runtime, not this plugin. Upstream live verification used Codex ACP; Antigravity on 0.9 remains unverified.
+- There is no macOS-only plugin restriction. Command tests cover macOS, Linux (`--uid=`), and Windows, including executable overrides containing spaces. CI now checks SDKs 0.8.0 and 0.9.0 on all three operating systems; the local checks reported here ran on macOS, not Linux or Windows.
+- [Paseo #4701](https://github.com/getpaseo/paseo/pull/4701), first included in 0.9.0-beta.1 and retained in 0.9.0, fixes streamed ACP chunks without `messageId` splitting into separate messages. The fix is supplied by the daemon runtime, not this plugin. Upstream live verification used Codex ACP; Antigravity on 0.9 remains unverified.
 
 The local Paseo installation was not updated or restarted. These are source, type, and automated checks, not 0.9 end-to-end verification. Login, model discovery, prompts, permissions, restoration, and cancellation still need real-agent checks on 0.9. Existing system-prompt and duplicate-tool-row limitations remain.
 
@@ -41,7 +42,7 @@ A live check placed a unique marker only in this metadata and asked the agent to
 
 ## Automated checks
 
-`npm run typecheck` passes. `npm test` runs two small Node built-in tests: platform command selection and login action routing. They cover literal paths containing spaces, Linux arguments with an override, unsupported OS rejection, use of the daemon's installed plugin directory and selected workspace, and preventing login from a disabled plugin. No test framework or runtime dependencies are installed by the plugin.
+`npm run typecheck` passes. `npm test` runs three small Node built-in tests: manifest version compatibility, platform command selection, and login action routing. They cover literal paths containing spaces, Linux arguments with an override, unsupported OS rejection, use of the daemon's installed plugin directory and selected workspace, and preventing login from a disabled plugin. No test framework or runtime dependencies are installed by the plugin.
 
 The installed manifest ID, Paseo version requirement, package version, and absence of runtime dependencies were also checked before publication. Real-server tests are manual integration checks, not mocked CI results.
 

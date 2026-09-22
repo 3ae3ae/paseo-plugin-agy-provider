@@ -1,8 +1,20 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import { assertPluginCompatibility } from "@getpaseo/protocol/plugin-requirements";
 import { agyCommand } from "./command.ts";
 import contribute from "../index.client.ts";
 import type { PluginClientContext, PluginWorkspaceCommandContext } from "@getpaseo/plugin/client";
+
+test("manifest accepts Paseo 0.8 and later for both runtimes", () => {
+  const manifest = JSON.parse(readFileSync(new URL("../paseo-plugin.json", import.meta.url), "utf8"));
+  for (const runtime of ["app", "daemon"] as const) {
+    for (const version of ["0.8.0", "0.8.1", "0.9.0-beta.1", "0.9.0", "0.10.0", "1.0.0"]) {
+      assert.doesNotThrow(() => assertPluginCompatibility({ ...manifest, runtime, version }));
+    }
+    assert.throws(() => assertPluginCompatibility({ ...manifest, runtime, version: "0.7.2" }), /requires Paseo/);
+  }
+});
 
 test("official platform commands and literal executable overrides", () => {
   assert.deepEqual(agyCommand("darwin", ""), ["agy_acp_server.par"]);
@@ -11,6 +23,8 @@ test("official platform commands and literal executable overrides", () => {
   const executable = "/Applications/Antigravity ACP/agy_acp_server.par";
   assert.deepEqual(agyCommand("darwin", executable), [executable]);
   assert.deepEqual(agyCommand("linux", executable), [executable, "--uid="]);
+  const windowsExecutable = "C:\\Program Files\\Antigravity ACP\\agy_acp_server.exe";
+  assert.deepEqual(agyCommand("win32", windowsExecutable), [windowsExecutable]);
   assert.throws(() => agyCommand("freebsd", ""), /does not support freebsd/);
 });
 

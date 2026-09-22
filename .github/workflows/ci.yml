@@ -9,7 +9,11 @@ permissions:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        sdk: ["0.8.0", "0.9.0"]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -17,5 +21,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - if: matrix.sdk != '0.8.0'
+        run: npm install --no-save --package-lock=false @getpaseo/plugin@${{ matrix.sdk }} @getpaseo/client@${{ matrix.sdk }} @getpaseo/protocol@${{ matrix.sdk }}
       - run: npm run typecheck
       - run: npm test
