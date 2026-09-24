@@ -1,6 +1,6 @@
 {
   "name": "paseo-plugin-agy-provider",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Paseo 0.8+ provider plugin for Google's official Antigravity ACP server",
   "type": "module",
   "private": true,
