@@ -1,14 +1,29 @@
 import { spawn } from "node:child_process";
 import { createInterface } from "node:readline";
+import os from "node:os";
 import { agyCommand } from "../server/command.ts";
 
 // Setup only: Paseo's workspace terminal runs this, not the provider connection.
 const [executable, ...args] = agyCommand();
 const child = spawn(executable, args, {
   env: { ...process.env, PYTHONUNBUFFERED: "1" },
-  stdio: ["pipe", "pipe", "ignore"],
+  stdio: ["pipe", "pipe", "pipe"],
 });
 const lines = createInterface({ input: child.stdout });
+const errLines = createInterface({ input: child.stderr });
+errLines.on("line", (line) => {
+  console.log(line);
+  if (!(process.env.SSH_CONNECTION || process.env.SSH_CLIENT)) return;
+  if (!line.startsWith("Open the following link to authenticate")) return;
+  const match = line.match(/redirect_uri=http%3A%2F%2F127\.0\.0\.1%3A(\d+)%2F/);
+  if (!match) return;
+  const port = match[1];
+  const user = process.env.USER;
+  const target = `${user ? `${user}@` : ""}${os.hostname()}`;
+  console.log(
+    `\nRemote SSH session detected. The OAuth callback targets 127.0.0.1:${port} on the browser's machine. Run this in a new terminal on your laptop to bridge it back here, then open the link above in your laptop browser:\n  ssh -L ${port}:127.0.0.1:${port} ${target}`,
+  );
+});
 let nextId = 0;
 
 function request(method: string, params: object): Promise<void> {
@@ -55,5 +70,6 @@ try {
   process.exitCode = 1;
 } finally {
   lines.close();
+  errLines.close();
   child.kill();
 }
