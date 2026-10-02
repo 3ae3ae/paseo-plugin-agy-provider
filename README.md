@@ -1,6 +1,9 @@
 # agy-provider
 
-Use Google's official **Antigravity ACP server** in [Paseo](https://paseo.sh/docs/plugins/providers) **0.8 and later** (`>=0.8.0`), including **0.9.0**. This is a community-maintained plugin. Real-agent verification covers 0.8.0; the stable 0.9.0 SDK has passed type and automated compatibility checks, with live sessions still unverified. Later versions are allowed by the manifest but have not been verified.
+Use Google's official **Antigravity ACP server** in [Paseo](https://paseo.sh/docs/plugins/providers) **0.8–0.10** (`>=0.8.0 <0.11.0`). This is a community-maintained plugin. Real-agent verification covers 0.8.0; the stable 0.9.0 SDK has passed type and automated compatibility checks, with live sessions still unverified. Paseo 0.10 is allowed by the manifest but has not been verified with a live session or its SDK.
+
+> [!NOTE]
+> **Paseo 0.11 and later include native Antigravity (AGY) support. Use Paseo's native support on those versions.** This plugin supports only Paseo versions below 0.11.
 
 > [!IMPORTANT]
 > **Paseo's injected system prompts and the instructions they contain are not applied.**
@@ -38,7 +41,7 @@ Set this in the environment that starts the daemon; exporting it in another term
 paseo plugin add 3ae3ae/paseo-plugin-agy-provider
 ```
 
-For an existing installation, run `paseo plugin update agy-provider`. Both the client and daemon must use Paseo 0.8 or later and a plugin revision with the matching version requirement. The login menu requires plugin v0.1.1+; older revisions restricted to 0.8 must be updated for 0.9.
+For an existing installation, run `paseo plugin update agy-provider`. Both the client and daemon must use Paseo `>=0.8.0 <0.11.0` and a plugin revision with the matching version requirement. For Paseo 0.11 or later, use native Antigravity support. The login menu requires plugin v0.1.1+; older revisions restricted to 0.8 must be updated for 0.9.
 
 ### 3. Log in
 
@@ -100,8 +103,9 @@ See [VERIFICATION.md](VERIFICATION.md) for tested behavior and versions.
 | Executable not found | Daemon PATH or `PASEO_AGY_ACP_BIN`. |
 | `Internal error` opening a session | Keep the companion executable beside the server; extract the full archive. |
 | `Authentication required` | Use the login action, or check API-key configuration. |
-| Login menu missing | Update the plugin, use a Paseo 0.8+ client, and open a workspace. |
-| Plugin rejected on Paseo 0.9 | Update to a plugin revision whose manifest requires `>=0.8.0`; check the client and daemon versions. |
+| Login menu missing | Update the plugin, use a Paseo 0.8–0.10 client, and open a workspace. |
+| Plugin rejected on Paseo 0.9 | Update to a plugin revision whose manifest requires `>=0.8.0 <0.11.0`; check the client and daemon versions. |
+| Plugin rejected on Paseo 0.11 or later | Use Paseo's native Antigravity support; this plugin requires `<0.11.0`. |
 | No models after login | Reload the plugin; check `paseo provider diagnostic agy`. |
 
 Plugin startup logs: `paseo plugin logs agy-provider`. Remove credentials, OAuth links, and private content before sharing logs.

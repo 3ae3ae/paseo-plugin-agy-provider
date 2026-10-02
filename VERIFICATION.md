@@ -2,12 +2,20 @@
 
 Verified on 2026-09-11 with Paseo **0.8.0**, `@getpaseo/plugin` **0.8.0**, and Google's unmodified official ACP server **agy_acp_server_1.1.1** on **macOS ARM64**. The server and its companion executable were downloaded from the official ACP Registry's Google distribution URL. Tests used a separate demonstration workspace.
 
+## v0.1.3 support range
+
+Paseo 0.11 and later include native Antigravity (AGY) support. Plugin v0.1.3 limits `requirements.paseo` to `>=0.8.0 <0.11.0`; use Paseo's native support on 0.11 and later.
+
+The automated manifest test uses Paseo's actual compatibility checker for both app and daemon. It accepts 0.8.0, 0.8.1, 0.9.0-beta.1, 0.9.0, 0.10.0, and 0.10.1, and rejects 0.7.2, 0.11.0-beta.1, 0.11.0, 0.11.1, 0.12.0, and 1.0.0. Paseo checks the stable core of prerelease versions, so the upper bound also excludes 0.11 prereleases. Manifest acceptance does not establish live-session or SDK compatibility with 0.10.
+
+On 2026-10-02, type checking and all three Node tests passed on macOS with SDK 0.8.0 and with SDK 0.9.0 in an isolated temporary copy.
+
 ## Paseo 0.9 compatibility review
 
-Reviewed again on 2026-09-22 against the stable `v0.9.0` compatibility checker, manifest parser, update CLI, and published SDK. The manifest now allows `>=0.8.0`, removing the previous `^0.8.0 || ^0.9.0` upper bound. Provider registration and the workspace-terminal login use APIs available in both versions; no runtime implementation changes were needed.
+Reviewed again on 2026-09-22 against the stable `v0.9.0` compatibility checker, manifest parser, update CLI, and published SDK. At that time, the manifest allowed `>=0.8.0`, removing the previous `^0.8.0 || ^0.9.0` upper bound. Plugin v0.1.3 adds the upper bound described above. Provider registration and the workspace-terminal login use APIs available in both versions; no runtime implementation changes were needed.
 
 - Type checking and all three Node tests passed with SDK 0.8.0 and with the published 0.9.0 plugin, client, and protocol packages in an isolated temporary copy.
-- The automated manifest test uses Paseo's actual compatibility checker for both app and daemon. It accepts 0.8.0, 0.8.1, 0.9.0-beta.1, 0.9.0, 0.10.0, and 1.0.0, and rejects 0.7.2. Paseo also checks the stable core of prerelease versions. Acceptance by the version requirement does not establish runtime compatibility with future releases.
+- At the time, the automated manifest test accepted 0.8.0, 0.8.1, 0.9.0-beta.1, 0.9.0, 0.10.0, and 1.0.0, and rejected 0.7.2 for both app and daemon. The current support range is described above.
 - The development SDK remains at 0.8.0. The manifest omits the 0.9-only `description` field because 0.8 rejects unknown manifest fields.
 - There is no macOS-only plugin restriction. Command tests cover macOS, Linux (`--uid=`), and Windows, including executable overrides containing spaces. CI now checks SDKs 0.8.0 and 0.9.0 on all three operating systems; the local checks reported here ran on macOS, not Linux or Windows.
 - [Paseo #4701](https://github.com/getpaseo/paseo/pull/4701), first included in 0.9.0-beta.1 and retained in 0.9.0, fixes streamed ACP chunks without `messageId` splitting into separate messages. The fix is supplied by the daemon runtime, not this plugin. Upstream live verification used Codex ACP; Antigravity on 0.9 remains unverified.

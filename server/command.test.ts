@@ -6,13 +6,15 @@ import { agyCommand } from "./command.ts";
 import contribute from "../index.client.ts";
 import type { PluginClientContext, PluginWorkspaceCommandContext } from "@getpaseo/plugin/client";
 
-test("manifest accepts Paseo 0.8 and later for both runtimes", () => {
+test("manifest accepts Paseo >=0.8.0 <0.11.0 for both runtimes", () => {
   const manifest = JSON.parse(readFileSync(new URL("../paseo-plugin.json", import.meta.url), "utf8"));
   for (const runtime of ["app", "daemon"] as const) {
-    for (const version of ["0.8.0", "0.8.1", "0.9.0-beta.1", "0.9.0", "0.10.0", "1.0.0"]) {
+    for (const version of ["0.8.0", "0.8.1", "0.9.0-beta.1", "0.9.0", "0.10.0", "0.10.1"]) {
       assert.doesNotThrow(() => assertPluginCompatibility({ ...manifest, runtime, version }));
     }
-    assert.throws(() => assertPluginCompatibility({ ...manifest, runtime, version: "0.7.2" }), /requires Paseo/);
+    for (const version of ["0.7.2", "0.11.0-beta.1", "0.11.0", "0.11.1", "0.12.0", "1.0.0"]) {
+      assert.throws(() => assertPluginCompatibility({ ...manifest, runtime, version }), /requires Paseo/);
+    }
   }
 });
 
